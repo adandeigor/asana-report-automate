@@ -173,11 +173,11 @@ export const fetchAllTasks = async (userId: string, workspaceGid?: string, proje
       where: { userId },
       select: { taskGid: true },
     });
-    const existingTaskGids = new Set(existingTasks.map(task => task.taskGid));
+    const existingTaskGids: Set<string> = new Set(existingTasks.map(task => task.taskGid));
 
     // Supprimer les tâches de la base qui ne sont plus dans Asana
-    const asanaTaskGids = new Set(tasks.map(task => task.gid));
-    const tasksToDelete = existingTasks.filter(task => !asanaTaskGids.has(task.taskGid));
+    const asanaTaskGids: Set<string> = new Set(tasks.map(task => task.gid));
+    const tasksToDelete: { taskGid: string }[] = existingTasks.filter(task => !asanaTaskGids.has(task.taskGid));
     if (tasksToDelete.length > 0) {
       await prisma.asanaTask.deleteMany({
         where: {
