@@ -21,11 +21,19 @@ app.use(
 app.use(express.json());
 app.use('/api', userRoutes);
 
+app.get('/api/run-task', async (req: Request, res: Response) => {
+  try {
+    await scheduleDailyTaskJob();
+    res.json({ message: 'Tâche exécutée avec succès' });
+  } catch (error) {
+    res.status(500).json({ error: "Erreur lors de l'exécution de la tâche" });
+  }
+});
+
 app.get('/', (req: Request, res: Response) => {
   res.json({ message: 'Bienvenue sur mon API avec Express, TypeScript, Zod, JWT et Prisma !' });
 });
 
- scheduleDailyTaskJob();
 
 console.log('Application Express chargée');
 
