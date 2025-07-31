@@ -81,7 +81,7 @@ export const fetchCompletedTasksInTimeframe = async (userId: string, workspaceGi
         date: startTime,
         workspaceGid: effectiveWorkspaceGid,
         projectGid,
-        tasks: tasks.map(task => ({
+        tasks: tasks.map((task: Task) => ({
           taskGid: task.gid,
           name: task.name,
           completedAt: task.completed_at,
@@ -270,7 +270,7 @@ export const generateWeeklyReport = async (userId: string, workspaceGid?: string
       weekEnd,
       workspaceGid,
       projectGid,
-      dailyReports: dailyReports.map(report => ({
+      dailyReports: dailyReports.map((report: { date: Date; tasks: any }) => ({
         date: report.date,
         tasks: report.tasks,
       })),

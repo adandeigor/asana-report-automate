@@ -9,7 +9,13 @@ import { verifyToken } from '../middlewares/authMiddleware';
 import prisma from '../lib/prismaInit';
 
 const router = Router();
-
+interface DailyReport {
+  id: string;
+  date: Date;
+  workspaceGid: string;
+  projectGid: string;
+  tasks: string[];
+}
 // Schéma Zod pour valider les requêtes de création de tâche
 const createTaskInputSchema = z.object({
   name: z.string().min(1, { message: 'Le nom de la tâche est requis' }),
@@ -338,9 +344,16 @@ router.get('/stats', verifyToken, async (req: Request, res: Response) => {
     filters.date = { gte: new Date(startDate as string), lte: new Date(endDate as string) };
   }
 
-  const reports = await prisma.dailyReport.findMany({ where: filters });
+  const prismaReports = await prisma.dailyReport.findMany({ where: filters });
+  const reports: DailyReport[] = prismaReports.map((r: any) => ({
+    id: String(r.id),
+    date: r.date,
+    workspaceGid: r.workspaceGid ?? '',
+    projectGid: r.projectGid ?? '',
+    tasks: Array.isArray(r.tasks) ? r.tasks : [],
+  }));
   const stats = {
-    totalTasks: reports.reduce((sum:number, r:any) => sum + (Array.isArray(r.tasks) ? r.tasks.length : 0), 0),
+    totalTasks: reports.reduce((sum: number, r: any) => sum + (Array.isArray(r.tasks) ? r.tasks.length : 0), 0),
     byDay: reports.map(r => ({
       date: r.date,
       taskCount: Array.isArray(r.tasks) ? r.tasks.length : 0,
