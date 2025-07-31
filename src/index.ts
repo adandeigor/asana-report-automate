@@ -22,15 +22,12 @@ app.use(
 
 app.use(express.json());
 
-// Routes
 app.use('/api', userRoutes);
 
-// Route de test
 app.get('/', (req: Request, res: Response) => {
   res.json({ message: 'Bienvenue sur mon API avec Express, TypeScript, Zod, JWT et Prisma !' });
 });
 
-// Lancer le job quotidien
 scheduleDailyTaskJob();
 
 
