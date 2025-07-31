@@ -8,7 +8,8 @@
     "start": "node dist/index.js",
     "dev": "nodemon src/index.ts",
     "prisma:generate": "npx prisma generate",
-    "prisma:migrate": "npx prisma migrate dev --name init"
+    "prisma:migrate": "npx prisma migrate dev --name init",
+    "vercel-build": "echo hello"
   },
   "dependencies": {
     "@prisma/client": "^5.12.0",
