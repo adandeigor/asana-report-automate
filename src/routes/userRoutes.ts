@@ -128,7 +128,8 @@ router.post('/tasks', verifyToken, async (req: Request, res: Response) => {
   try {
     const validatedData = createTaskInputSchema.parse(req.body);
     const userId = (req as any).user.userId;
-    const task = await createAsanaTask({ ...validatedData, userId });
+    const { name, workspaceGid, projectGid } = validatedData;
+    const task = await createAsanaTask({ name, userId, workspaceGid, projectGid });
     res.status(201).json({ message: 'Tâche créée', task });
   } catch (error: any) {
     res.status(400).json({ error: error.message || 'Erreur lors de la création de la tâche' });
@@ -183,7 +184,8 @@ router.put('/tasks/:taskGid', verifyToken, async (req: Request, res: Response) =
   try {
     const userId = (req as any).user.userId;
     const validatedData = updateTaskInputSchema.parse({ taskGid: req.params.taskGid, ...req.body });
-    const task = await updateAsanaTask({ ...validatedData, userId });
+    const { taskGid, name } = validatedData;
+    const task = await updateAsanaTask({ taskGid, name, userId });
     res.json({ message: 'Tâche mise à jour', task });
   } catch (error: any) {
     res.status(400).json({ error: error.message || 'Erreur lors de la mise à jour de la tâche' });
