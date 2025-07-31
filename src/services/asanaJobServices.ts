@@ -9,6 +9,12 @@ const prisma = new PrismaClient();
 const ASANA_BASE_URL = 'https://app.asana.com/api/1.0';
 const ASANA_WORKSPACE_GID = process.env.ASANA_WORKSPACE_GID || '1210917388726319';
 
+interface Task {
+  gid: string;
+  name: string;
+  completed_at: string | null;
+  assignee?: { gid: string };
+}
 const createAsanaApi = async (userId: string): Promise<AxiosInstance> => {
   const user = await prisma.user.findUnique({
     where: { id: userId },
@@ -38,7 +44,7 @@ export const fetchCompletedTasksInTimeframe = async (userId: string, workspaceGi
   endTime.setHours(17, 0, 0, 0);
 
   try {
-    let tasks: any[] = [];
+    let tasks: Task [] = [];
     let nextPage: string | null = null;
     const baseQuery = projectGid
       ? `/tasks?project=${projectGid}&completed_since=${startTime.toISOString()}`
@@ -96,7 +102,7 @@ export const fetchAllCompletedTasks = async (userId: string, workspaceGid?: stri
   const effectiveWorkspaceGid = workspaceGid || ASANA_WORKSPACE_GID;
 
   try {
-    let tasks: any[] = [];
+    let tasks: Task[] = [];
     let nextPage: string | null = null;
     const baseQuery = projectGid
       ? `/tasks?project=${projectGid}&completed_since=1970-01-01T00:00:00.000Z`
@@ -146,7 +152,7 @@ export const fetchAllTasks = async (userId: string, workspaceGid?: string, proje
   const effectiveWorkspaceGid = workspaceGid || ASANA_WORKSPACE_GID;
 
   try {
-    let tasks: any[] = [];
+    let tasks: Task[] = [];
     let nextPage: string | null = null;
     const baseQuery = projectGid
       ? `/tasks?project=${projectGid}`

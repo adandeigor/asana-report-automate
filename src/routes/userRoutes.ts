@@ -340,7 +340,7 @@ router.get('/stats', verifyToken, async (req: Request, res: Response) => {
 
   const reports = await prisma.dailyReport.findMany({ where: filters });
   const stats = {
-    totalTasks: reports.reduce((sum, r) => sum + (Array.isArray(r.tasks) ? r.tasks.length : 0), 0),
+    totalTasks: reports.reduce((sum:number, r:any) => sum + (Array.isArray(r.tasks) ? r.tasks.length : 0), 0),
     byDay: reports.map(r => ({
       date: r.date,
       taskCount: Array.isArray(r.tasks) ? r.tasks.length : 0,
