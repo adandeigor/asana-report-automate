@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { PrismaClient } from '@prisma/client';
+import prisma from './lib/prismaInit'; // Importe le singleton
 import userRoutes from './routes/userRoutes';
 import dotenv from 'dotenv';
 import cors from 'cors';
@@ -8,7 +8,6 @@ import { scheduleDailyTaskJob } from './services/asanaJobServices';
 dotenv.config();
 
 const app = express();
-const prisma = new PrismaClient();
 
 app.use(
   cors({
@@ -26,11 +25,9 @@ app.get('/', (req: Request, res: Response) => {
   res.json({ message: 'Bienvenue sur mon API avec Express, TypeScript, Zod, JWT et Prisma !' });
 });
 
-// Log pour confirmer que l'app est chargée
-console.log('Application Express chargée');
+ scheduleDailyTaskJob();
 
-// Commente temporairement pour éviter les crashs sur Vercel
-// scheduleDailyTaskJob();
+console.log('Application Express chargée');
 
 // Lancer le serveur local uniquement en développement
 if (process.env.NODE_ENV !== 'production') {
