@@ -1,0 +1,60 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated/client"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id                  String         @id @default(uuid())
+  email               String         @unique
+  name                String?
+  password            String
+  role                String         @default("USER")
+  asanaToken          String? // Stocke l'access token Asana
+  asanaRefreshToken   String? // Nouveau champ pour le refresh_token
+  asanaTokenExpiresAt DateTime? // Nouveau champ pour la date d'expiration
+  dailyReports        DailyReport[] // Relation avec les rapports journaliers
+  weeklyReports       WeeklyReport[] // Relation avec les rapports hebdomadaires
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+  tasks               AsanaTask[] // Relation avec les tâches Asana
+}
+
+model AsanaTask {
+  id          String    @id @default(uuid())
+  taskGid     String    @unique // GID de la tâche dans Asana
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+  name        String
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model DailyReport {
+  id           Int      @id @default(autoincrement())
+  userId       String
+  date         DateTime // Date du rapport (ex. 2025-07-30)
+  workspaceGid String? // Workspace concerné
+  projectGid   String? // Projet concerné
+  tasks        Json // Liste des tâches complétées (stockées en JSON pour flexibilité)
+  createdAt    DateTime @default(now())
+  user         User     @relation(fields: [userId], references: [id])
+}
+
+model WeeklyReport {
+  id           Int      @id @default(autoincrement())
+  userId       String
+  weekStart    DateTime // Début de la semaine (lundi)
+  weekEnd      DateTime // Fin de la semaine (vendredi)
+  workspaceGid String? // Workspace concerné
+  projectGid   String? // Projet concerné
+  dailyReports Json // Liste des rapports journaliers
+  createdAt    DateTime @default(now())
+  user         User     @relation(fields: [userId], references: [id])
+}
