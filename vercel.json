@@ -2,14 +2,14 @@
   "version": 2,
   "builds": [
     {
-     "src": "src/**/*.ts",
+      "src": "src/**/*.ts",
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "./src/index.ts",
+      "dest": "/src/index.ts",
       "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
       "headers": {
         "Access-Control-Allow-Credentials": "true",
@@ -18,5 +18,8 @@
         "Access-Control-Allow-Headers": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization"
       }
     }
-  ]
+  ],
+  "engines": {
+    "node": "18.x"
+  }
 }
